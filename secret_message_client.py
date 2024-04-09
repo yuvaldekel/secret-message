@@ -20,7 +20,7 @@ def main():
         ascii_presentation = ord(char)
 
         continue_sent = True
-        message_packet = IP(dst = DST_IP, src = SRC_IP)/UDP(sport = 24601,dport = ascii_presentation, chksum = index)
+        message_packet = IP(dst = DST_IP, src = SRC_IP)/UDP(sport = 24601,dport = ascii_presentation, chksum = index - 1)
         
         continue_sent = send_packet(message_packet)
         while continue_sent:
