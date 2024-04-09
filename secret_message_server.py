@@ -3,7 +3,7 @@ from scapy.all import *
 
 SRC_PORT = 24601
 SRC_IP = '192.168.68.62'
-DST_IP = '192.168.68.60'
+MY_IP = '192.168.68.60'
 
 def get_message(packet):
     return (IP in packet and packet[IP].src == SRC_IP and UDP in packet and packet[UDP].sport == SRC_PORT)
@@ -19,7 +19,7 @@ def main():
             
             ascii = packet[0][UDP].dport
             index = packet[0][UDP].chksum
-            acknowledge_packet = IP(dst = SRC_IP, src = DST_IP)/UDP(sport = ascii,dport = 24601, chksum = index)
+            acknowledge_packet = IP(dst = SRC_IP, src = MY_IP)/UDP(sport = ascii,dport = 24601, chksum = index)
             send(acknowledge_packet)
             if ascii == 4:
                 break
