@@ -5,8 +5,11 @@ DST_IP = '127.0.0.1'
 
 def main():
     message = input("Enter your message: ")
+    len_message =len(message)
     for index, char in enumerate(message):
         ascii_presentation = ord(char)
+        if index + 1 == len_message:
+            index = 999
         message_packet = IP(dst = DST_IP)/UDP(sport = 24601,dport = ascii_presentation, chksum = index)
         send(message_packet)
 
