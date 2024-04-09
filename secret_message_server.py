@@ -1,36 +1,35 @@
 from scapy.all import IP, UDP, TCP, DNS, DNSQR, DNSRR
 from scapy.all import *
 
-SRC_IP = 24601
+SRC_PORT = 24601
+SRC_IP = '192.168.68.60'
 
 def get_message(packet):
-    return (UDP in packet and packet[UDP].sport == SRC_IP)
+    return (IP in packet and packet[IP].src == SRC_IP and UDP in packet and packet[UDP].sport == SRC_IP)
 
-def find_missing_packets(l):
-    l = [i[1] for i in l]
-    
-    missing = []
-    length = len(l)
-    indexes = [i for i in range(length)]
-    indexes[-1] = 999
-    
-    for index_1 , index_2 in zip(l, indexes):
-        if index_2 != index_1:
-            missing.append(index_2)
-    return missing
+def find_missing_packets(original_list):
+    return [num for num in range(len(original_list)) if num not in original_list]
 
 def main():
-    index = 0
-    message_chars =[]
-    while index != 999:
-        packet = sniff(lfilter = get_message)
-        ascii = packet[UDP].dport
-        index = packet[UDP].chksum
-        message_chars.append((chr(ascii), index))
+    len_message = 1
+    i = 0
+    message =[]
+    while i < len_message:
+        packet = sniff(count = 1, lfilter = get_message, timeout= 10)
+        try:
+            ascii = packet[0][UDP].dport
+            index = packet[0][UDP].chksum
+            len_message = packet[0][UDP].len
+            message.append((chr(ascii), index))
+            i = i + 1
+        except IndexError:
+            exit()
 
-    message_chars.sort(key = lambda x: x[1])
+    message.sort(key = lambda x: x[1])
     
-    message = ''.join([char[0] for char in message_chars])
+    missing = find_missing_packets(message)
+
+    message = ''.join(['*' if i in missing else char[0] for i, char in enumerate(message)])
     print(message)
 
 if __name__ == "__main__":
