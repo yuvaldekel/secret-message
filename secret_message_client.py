@@ -23,15 +23,19 @@ def main():
         message_packet = IP(dst = DST_IP, src = SRC_IP)/UDP(sport = 24601,dport = ascii_presentation, chksum = index - 1)
         
         continue_sent = send_packet(message_packet)
-        while continue_sent:
+        i = 0
+        while continue_sent and i <= 10:
             continue_sent = send_packet(message_packet)
+            i = i + 1
 
     continue_sent = True
     end_packet = IP(dst = DST_IP, src = SRC_IP)/UDP(sport = 24601,dport = 4)
     
     continue_sent = send_packet(end_packet)
-    while continue_sent:
+    while continue_sent and i <= 10:
+        i = 0
         continue_sent = send_packet(end_packet)
+        i = i + 1
         
 
 if __name__ == "__main__":
