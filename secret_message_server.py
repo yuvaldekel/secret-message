@@ -26,7 +26,7 @@ def main():
 
         message.append((chr(ascii), index))
 
-    #message.sort(key = lambda x: x[1])
+    message.sort(key = lambda x: x[1])
     message = list(set(message))
     missing = find_missing_packets(message)
 
