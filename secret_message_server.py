@@ -1,12 +1,12 @@
 from scapy.all import IP, UDP, TCP, DNS, DNSQR, DNSRR
 from scapy.all import *
 
-SRC_PORT = 24601
-SRC_IP = '192.168.68.62'
-MY_IP = '192.168.68.60'
+CLIENT_PORT = 24601
+CLIENT_IP = '172.26.25.218'
+SERVER_IP = '172.26.16.1'
 
 def get_message(packet):
-    return (IP in packet and packet[IP].src == SRC_IP and UDP in packet and packet[UDP].sport == SRC_PORT)
+    return (IP in packet and packet[IP].src == CLIENT_IP and UDP in packet and packet[UDP].sport == CLIENT_PORT)
 
 def find_missing_packets(original_list):
     original_list = [i[1] for i in original_list]
@@ -19,7 +19,7 @@ def main():
  
         ascii = packet[0][UDP].dport
         index = packet[0][UDP].chksum -1 
-        acknowledge_packet = IP(dst = SRC_IP, src = MY_IP)/UDP(sport = ascii,dport = 24601)
+        acknowledge_packet = IP(dst = CLIENT_IP, src = SERVER_IP)/UDP(sport = ascii,dport = 24601)
         send(acknowledge_packet)
         if ascii == 4:
             break
